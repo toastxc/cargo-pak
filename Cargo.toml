@@ -1,0 +1,13 @@
+[package]
+name = "cargo-pack"
+version = "0.1.1"
+edition = "2021"
+description = "Generate manifest and desktop files for flatpak"
+
+# See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
+
+[dependencies]
+serde = { version = "1.0.197", features = ["derive"] }
+serde_yaml = "0.9.34+deprecated"
+toml = "0.8.12"
+anyhow = "1.0.81"
