@@ -2,6 +2,8 @@
 name = "cargo-pack"
 version = "0.1.1"
 edition = "2021"
+license = "GPL-3"
+repository = "https://github.com/toastxc/cargo-pack"
 description = "Generate manifest and desktop files for flatpak"
 
 # See more keys and their definitions at https://doc.rust-lang.org/cargo/reference/manifest.html
