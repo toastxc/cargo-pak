@@ -1,0 +1,18 @@
+app_id="xyz.toastxc.Hello"
+app_name= "Hello"
+# defined in Cargo.toml (release is performant)
+profile="release"
+
+# cargo-pack will default to package name in Cargo.toml
+# bin="hello-world"
+
+# definitions: https://docs.flatpak.org/en/latest/sandbox-permissions.html
+permissions = [
+    "--share=network",
+    "--socket=x11",
+    "--device=dri"
+]
+
+# definitions: https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
+[desktopfile]
+terminal= false
