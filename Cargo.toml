@@ -1,5 +1,5 @@
 [package]
-name = "cargo-pack"
+name = "cargo-pak"
 version = "0.1.1"
 edition = "2021"
 license = "GPL-3.0-only"
