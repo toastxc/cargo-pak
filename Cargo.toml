@@ -2,7 +2,7 @@
 name = "cargo-pack"
 version = "0.1.1"
 edition = "2021"
-license = "GPL-3"
+license = "GPL-3.0-only"
 repository = "https://github.com/toastxc/cargo-pack"
 description = "Generate manifest and desktop files for flatpak"
 
