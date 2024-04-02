@@ -1,4 +1,4 @@
-## Cargo-pack
+## Cargo-pak
 the easiest way to package flatpak files
 
 
