@@ -8,21 +8,40 @@ pub type Result<T> = core::result::Result<T, anyhow::Error>;
 fn main() {
     let mut args: Vec<String> = args().collect();
     args.remove(0);
-    let Some(path) = args.first() else { return };
+
+    let Some(arg) = args.first() else { return };
+
     println!("Cargo_pack starting...");
-    other_main(path).unwrap();
-    println!("Done!");
+    if let Err(error) = {
+        match arg.to_lowercase().as_str() {
+            "generate" => generate().map(|_| ()),
+            "build" => build().map(|_| ()),
+            "install" => install(),
+            "remove" => remove(),
+            _ => Ok(println!("Invalid command")),
+        }
+    } {
+        println!("{:?}", error);
+    } else {
+        println!("Done!");
+    }
 }
 
-fn other_main(path: impl Into<String>) -> Result<()> {
-    let file = toml::from_str::<ManifestTomlInput>(&String::from_utf8(std::fs::read(
-        PathBuf::from_str(&path.into())?,
-    )?)?)?;
-    println!("manifest accepted!");
-
-    let file: ManifestToml = file.into();
-
-    println!("step one: created manifest file");
+fn read_file() -> Result<ManifestToml> {
+    let file: ManifestToml = toml::from_str::<ManifestTomlInput>(&String::from_utf8(
+        std::fs::read(PathBuf::from_str("pak.toml")?)?,
+    )?)?
+    .into();
+    Ok(file)
+}
+fn remove() -> Result<()> {
+    let file = read_file()?;
+    println!("remove");
+    shell_attach(format!("sudo flatpak uninstall {} -y", file.app_id));
+    Ok(())
+}
+fn generate() -> Result<ManifestYaml> {
+    let file = read_file()?;
 
     shell("mkdir icons");
     shell(format!(
@@ -47,18 +66,39 @@ Exec={}
         file.bin,
     );
 
-    std::fs::write(format!("{}.desktop", file.app_id.clone()), desktop_file).unwrap();
+    std::fs::write(format!("{}.desktop", file.app_id.clone()), desktop_file)?;
 
     let new_file: ManifestYaml = file.clone().into();
-    let new_file = serde_yaml::to_string(&new_file).unwrap();
 
-    std::fs::write(format!("{}.yaml", file.app_id), new_file).unwrap();
-    shell_attach(format!("sudo flatpak uninstall {} -y", &file.app_id));
+    std::fs::write(
+        format!("{}.yaml", file.app_id),
+        serde_yaml::to_string(&new_file)?,
+    )?;
+    shell("mkdir icons");
+    shell(format!(
+        "convert {}.png -resize 128x128 icons/{}-128.png",
+        file.bin, file.bin,
+    ));
+
+    Ok(new_file)
+}
+fn build() -> Result<()> {
+    let file = read_file()?;
+
     shell_attach("mold --run cargo b -r");
     shell_attach(format!(
         "sudo flatpak-builder  --user build-dir {}.yaml  --force-clean",
         file.app_id
     ));
+    Ok(())
+}
+
+fn install() -> Result<()> {
+    let file = read_file()?;
+
+    println!("install");
+    remove()?;
+
     shell_attach(format!(
         "sudo flatpak-builder --install --force-clean build-dir {}.yaml",
         file.app_id
@@ -79,9 +119,11 @@ impl From<ManifestTomlInput> for ManifestToml {
     }
 }
 fn cargo_version() -> Result<Toml> {
-    Ok(toml::from_str::<Toml>(&String::from_utf8(std::fs::read(
-        "Cargo.toml",
-    )?)?)?)
+    let mut cargo = toml::from_str::<Toml>(&String::from_utf8(std::fs::read("Cargo.toml")?)?)?;
+
+    cargo.package.version.remove(0);
+    cargo.package.version.remove(0);
+    Ok(cargo)
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
