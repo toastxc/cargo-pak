@@ -1,12 +1,15 @@
+mod dep_check;
 mod shell;
 
+use crate::dep_check::check;
 use crate::shell::Shell;
 use serde::{Deserialize, Serialize};
-use std::{collections::HashSet, env::args, path::PathBuf, str::FromStr};
+use std::{collections::HashSet, env::args, fs, path::PathBuf, str::FromStr};
 
 pub type Result<T> = core::result::Result<T, anyhow::Error>;
 
 fn main() {
+    check();
     let mut args: Vec<String> = args().collect();
     args.remove(0);
 
@@ -39,7 +42,6 @@ fn read_file() -> Result<ManifestToml> {
 fn remove() -> Result<()> {
     let file = read_file()?;
     println!("remove");
-    // shell_attach(format!("sudo flatpak uninstall {} -y", file.app_id));
     Shell::cmd(format!("sudo flatpak uninstall {} -y", file.app_id)).spawn();
 
     Ok(())
@@ -47,13 +49,6 @@ fn remove() -> Result<()> {
 
 fn generate() -> Result<ManifestYaml> {
     let file = read_file()?;
-
-    // shell("mkdir icons");
-    // shell(format!(
-    //     "convert {} -resize 128x128 icons/{}-128.png",
-    //     file.bin, file.bin,
-    // ));
-
     Shell::cmd("mkdir icons").exec();
     Shell::cmd(format!(
         "convert {} -resize 128x128 icons/{}-128.png",
@@ -78,20 +73,25 @@ Exec={}
         file.bin,
     );
 
-    std::fs::write(format!("{}.desktop", file.app_id.clone()), desktop_file)?;
+    fs::write(format!("{}.desktop", file.app_id.clone()), desktop_file)?;
 
     let new_file: ManifestYaml = file.clone().into();
 
-    std::fs::write(
+    fs::write(
         format!("{}.yaml", file.app_id),
         serde_yaml::to_string(&new_file)?,
     )?;
-    // shell("mkdir icons");
+
+    let icon_path = format!("{}.png", file.bin);
+    if fs::read(&icon_path).is_err() {
+        println!("warning! icon not found at path {}", icon_path)
+    };
+
     Shell::cmd(format!(
         "convert {}.png -resize 128x128 icons/{}-128.png",
         file.bin, file.bin,
     ))
-    .exec();
+    .spawn();
 
     Ok(new_file)
 }

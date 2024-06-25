@@ -3,6 +3,19 @@ the easiest way to package flatpak files
 
 
 ## How-to
+
+### Dependancies
+You will need 
+- Rust stable (as well as cargo and other tools)
+- cargo-pak
+- flatpak-builder
+- mold
+```bash
+rustup update
+cargo install cargo-pak
+apt-get install flatpak-builder mold
+```
+
 ### Create a rust application
 ```bash
 cargo new hello-world
@@ -12,6 +25,9 @@ fn main() {
     println!("hello world!");
 }
 ```
+
+
+
 ### Create an app config
 This config contains details for both the flatpak manifest and .Desktop file. the following example is for a graphical `X11` based application.
 ```toml
@@ -34,7 +50,7 @@ permissions = [
 [desktopfile]
 terminal= false
 ```
-If you want to use a CLI, its a bit more simple
+If you want to use a CLI, it's a bit more simple
 ```toml
 app_id="xyz.toastxc.Hello"
 app_name= "Hello"
