@@ -50,11 +50,9 @@ permissions = [
 [desktopfile]
 terminal= false
 ```
-If you want to use a CLI, it's a bit more simple
+If you want to use a CLI, it's a bit more simple. Information such as the app name and version are derived from Cargo.toml
 ```toml
 app_id="xyz.toastxc.Hello"
-app_name= "Hello"
-profile="release"
 
 [desktopfile]
 terminal= true
