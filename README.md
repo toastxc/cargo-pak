@@ -18,7 +18,8 @@ apt-get install flatpak-builder mold
 
 ### Create a rust application
 ```bash
-cargo new hello-world
+cargo new hello
+cd hello
 ```
 ```rust
 fn main() {
@@ -29,10 +30,13 @@ fn main() {
 
 
 ### Create an app config
+**The file must be named `pak.toml`!!**
+
+
 This config contains details for both the flatpak manifest and .Desktop file. the following example is for a graphical `X11` based application.
 ```toml
 app_id="xyz.toastxc.Hello"
-app_name= "Hello"
+app_name= "hello"
 # defined in Cargo.toml (release is performant)
 profile="release"
 
@@ -63,7 +67,7 @@ For the .desktop file icon to work you MUST leave a `.png` in the root of the di
 For example
 ```toml
 [package]
-name = "silly"
+name = "hello"
 version = "0.1.0"
 edition = "2021"
 ```
@@ -95,3 +99,14 @@ Removes the flatpak from your system
 ```bash
 cargo-pak remove
 ```
+
+
+# F.A.Q
+## Why is my icon not working?
+cargo-pak automatically converts and resizes icons, it should work as long as the icon follows these conditions
+- square (exactly 1:1 ratio)
+- in root directory (./)
+Most file types are supported as well as sizes
+
+## Building isn't working!
+If you have modified files you may need to run `cargo-pak generate` again.
