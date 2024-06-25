@@ -141,7 +141,7 @@ struct ManifestTomlInput {
     app_name: String,
     bin: Option<String>,
     profile: String,
-    permissions: HashSet<String>,
+    permissions: Option<HashSet<String>>,
     desktopfile: DesktopFile,
 }
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -150,7 +150,7 @@ struct ManifestToml {
     app_name: String,
     bin: String,
     profile: String,
-    permissions: HashSet<String>,
+    permissions: Option<HashSet<String>>,
     desktopfile: DesktopFile,
 }
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -168,7 +168,7 @@ struct ManifestYaml {
     sdk: String,
     command: String,
     #[serde(rename = "finish-args")]
-    finish_args: HashSet<String>,
+    finish_args: Option<HashSet<String>>,
     modules: Vec<Module>,
 }
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -211,7 +211,7 @@ impl From<ManifestToml> for ManifestYaml {
             runtime_version: version(),
             sdk: "org.freedesktop.Sdk".to_string(),
             command: bin.clone(),
-            finish_args: value.permissions.into_iter().collect(),
+            finish_args: value.permissions,
             modules: [
                 Module::from_fields(
                     "app",
