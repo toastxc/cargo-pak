@@ -62,3 +62,38 @@ terminal= true
 
 ### Icons
 For the .desktop file icon to work you MUST leave a `.png` in the root of the directory, identical to the bin name. (e.g. `hello-world.png`)
+For example
+```toml
+[package]
+name = "silly"
+version = "0.1.0"
+edition = "2021"
+```
+```bash
+hello.png
+```
+Even if the file is NOT a png, rename it. This program can convert file types and sizes.
+
+### Commands
+These commands act in a similar way to docker-compose; they are directory dependant. You must be at the root of your rust project file for this to work
+
+#### Generate
+This command generates a desktopfile and flatpak manifest file based on pak.toml
+```bash
+cargo-pak generate
+```
+#### Build
+Builds a flatpak application based on the desktop & manifest file
+```bash
+cargo-pak build
+```
+#### Install
+Installs (as root) the flatpak
+```bash
+cargo-pak install
+```
+#### Remove
+Removes the flatpak from your system
+```bash
+cargo-pak remove
+```
