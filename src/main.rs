@@ -1,7 +1,8 @@
+mod shell;
+
+use crate::shell::Shell;
 use serde::{Deserialize, Serialize};
-use std::{
-    collections::HashSet, env::args, io::Read, path::PathBuf, process::Command, str::FromStr,
-};
+use std::{collections::HashSet, env::args, path::PathBuf, str::FromStr};
 
 pub type Result<T> = core::result::Result<T, anyhow::Error>;
 
@@ -34,20 +35,31 @@ fn read_file() -> Result<ManifestToml> {
     .into();
     Ok(file)
 }
+
 fn remove() -> Result<()> {
     let file = read_file()?;
     println!("remove");
-    shell_attach(format!("sudo flatpak uninstall {} -y", file.app_id));
+    // shell_attach(format!("sudo flatpak uninstall {} -y", file.app_id));
+    Shell::cmd(format!("sudo flatpak uninstall {} -y", file.app_id)).spawn();
+
     Ok(())
 }
+
 fn generate() -> Result<ManifestYaml> {
     let file = read_file()?;
 
-    shell("mkdir icons");
-    shell(format!(
+    // shell("mkdir icons");
+    // shell(format!(
+    //     "convert {} -resize 128x128 icons/{}-128.png",
+    //     file.bin, file.bin,
+    // ));
+
+    Shell::cmd("mkdir icons").exec();
+    Shell::cmd(format!(
         "convert {} -resize 128x128 icons/{}-128.png",
         file.bin, file.bin,
-    ));
+    ))
+    .exec();
 
     let desktop_file = format!(
         "\
@@ -74,22 +86,25 @@ Exec={}
         format!("{}.yaml", file.app_id),
         serde_yaml::to_string(&new_file)?,
     )?;
-    shell("mkdir icons");
-    shell(format!(
+    // shell("mkdir icons");
+    Shell::cmd(format!(
         "convert {}.png -resize 128x128 icons/{}-128.png",
         file.bin, file.bin,
-    ));
+    ))
+    .exec();
 
     Ok(new_file)
 }
+
 fn build() -> Result<()> {
     let file = read_file()?;
 
-    shell_attach("mold --run cargo b -r");
-    shell_attach(format!(
+    Shell::cmd("mold --run cargo b -r").spawn();
+    Shell::cmd(format!(
         "sudo flatpak-builder  --user build-dir {}.yaml  --force-clean",
         file.app_id
-    ));
+    ))
+    .spawn();
     Ok(())
 }
 
@@ -99,10 +114,11 @@ fn install() -> Result<()> {
     println!("install");
     remove()?;
 
-    shell_attach(format!(
+    Shell::cmd(format!(
         "sudo flatpak-builder --install --force-clean build-dir {}.yaml",
         file.app_id
-    ));
+    ))
+    .spawn();
     Ok(())
 }
 
@@ -118,6 +134,7 @@ impl From<ManifestTomlInput> for ManifestToml {
         }
     }
 }
+
 fn cargo_version() -> Result<Toml> {
     let mut cargo = toml::from_str::<Toml>(&String::from_utf8(std::fs::read("Cargo.toml")?)?)?;
 
@@ -130,11 +147,13 @@ fn cargo_version() -> Result<Toml> {
 struct Toml {
     package: Package,
 }
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 struct Package {
     version: String,
     name: String,
 }
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 struct ManifestTomlInput {
     app_id: String,
@@ -144,6 +163,7 @@ struct ManifestTomlInput {
     permissions: Option<HashSet<String>>,
     desktopfile: DesktopFile,
 }
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 struct ManifestToml {
     app_id: String,
@@ -153,6 +173,7 @@ struct ManifestToml {
     permissions: Option<HashSet<String>>,
     desktopfile: DesktopFile,
 }
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 struct DesktopFile {
     generic_name: Option<String>,
@@ -171,6 +192,7 @@ struct ManifestYaml {
     finish_args: Option<HashSet<String>>,
     modules: Vec<Module>,
 }
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 struct Module {
     name: String,
@@ -179,6 +201,7 @@ struct Module {
     build_commands: Vec<String>,
     sources: Vec<Source>,
 }
+
 #[derive(Deserialize, Serialize, Debug, Clone)]
 struct Source {
     #[serde(rename = "type")]
@@ -243,7 +266,9 @@ impl From<ManifestToml> for ManifestYaml {
 
 // find the open desktop's highest available version
 fn version() -> String {
-    let a = shell("flatpak install org.freedesktop.Sdk").unwrap();
+    let a = Shell::cmd("flatpak install org.freedesktop.Sdk")
+        .exec()
+        .unwrap();
     let mut a: Vec<String> = a.split('\n').map(String::from).collect();
     for _ in 0..3 {
         a.remove(0);
@@ -256,29 +281,4 @@ fn version() -> String {
         .reduce(f32::max)
         .unwrap()
         .to_string()
-}
-
-fn shell_attach(input: impl Into<String>) {
-    let input = input.into();
-    let mut string: Vec<&str> = input.split_ascii_whitespace().collect();
-    let cmd = string.remove(0);
-
-    if let Ok(mut child) = Command::new(cmd).args(string).spawn() {
-        let _ = child.wait();
-    }
-}
-fn shell(input: impl Into<String>) -> Option<String> {
-    let input = input.into();
-    let mut string: Vec<&str> = input.split_ascii_whitespace().collect();
-    let cmd = string.remove(0);
-
-    let a: Vec<u8> = Command::new(cmd)
-        .args(string)
-        .output()
-        .ok()?
-        .stdout
-        .bytes()
-        .filter_map(|a| a.ok())
-        .collect();
-    String::from_utf8(a).ok()
 }
