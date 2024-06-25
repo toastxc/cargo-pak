@@ -68,7 +68,7 @@ Exec={}
 ",
         cargo_version().unwrap().package.version,
         file.app_name,
-        file.desktopfile.terminal,
+        file.desktop_file.terminal,
         file.app_id,
         file.bin,
     );
@@ -130,7 +130,7 @@ impl From<ManifestTomlInput> for ManifestToml {
             bin: value.bin.unwrap_or(cargo_version().unwrap().package.name),
             profile: value.profile,
             permissions: value.permissions,
-            desktopfile: value.desktopfile,
+            desktop_file: value.desktop_file,
         }
     }
 }
@@ -161,7 +161,8 @@ struct ManifestTomlInput {
     bin: Option<String>,
     profile: String,
     permissions: Option<HashSet<String>>,
-    desktopfile: DesktopFile,
+    #[serde(rename = "desktopfile")]
+    desktop_file: DesktopFile,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
@@ -171,7 +172,8 @@ struct ManifestToml {
     bin: String,
     profile: String,
     permissions: Option<HashSet<String>>,
-    desktopfile: DesktopFile,
+    #[serde(rename = "desktopfile")]
+    desktop_file: DesktopFile,
 }
 
 #[derive(Deserialize, Serialize, Debug, Clone)]
