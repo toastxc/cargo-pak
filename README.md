@@ -4,7 +4,7 @@ the easiest way to package flatpak files
 
 ## How-to
 
-### Dependancies
+### Dependencies
 You will need 
 - Rust stable (as well as cargo and other tools)
 - cargo-pak
