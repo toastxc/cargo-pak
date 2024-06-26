@@ -44,7 +44,7 @@ fn remove() -> Result<()> {
 fn build() -> Result<()> {
     let file = ManifestToml::read_file()?;
 
-    Shell::cmd("mold --run cargo b -r").spawn();
+    Shell::cmd(format!("mold --run cargo b --bin {} -r", file.bin)).spawn();
     Shell::cmd(format!(
         "sudo flatpak-builder  --user build-dir {}.yaml  --force-clean",
         file.app_id
