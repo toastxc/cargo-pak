@@ -59,6 +59,8 @@ fn install() -> Result<()> {
     println!("install");
     remove()?;
 
+    Shell::cmd("flatpak install org.freedesktop.Sdk/x86_64/23.08 -y").spawn();
+
     Shell::cmd(format!(
         "sudo flatpak-builder --install --force-clean build-dir {}.yaml",
         file.app_id
