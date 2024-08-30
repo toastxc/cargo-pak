@@ -24,7 +24,7 @@ impl Flatpak {
 
         println!("VERSION: {version}");
         Shell::cmd(format!(
-            "flatpak install runtime/org.freedesktop.Platform/x86_64/{version}"
+            "flatpak install runtime/org.freedesktop.Platform/x86_64/{version} -y"
         ))
         .spawn();
     }
