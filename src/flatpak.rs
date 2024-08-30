@@ -27,6 +27,10 @@ impl Flatpak {
             "flatpak install runtime/org.freedesktop.Platform/x86_64/{version} -y"
         ))
         .spawn();
+        Shell::cmd(format!(
+            "flatpak install runtime/org.freedesktop.Sdk/x86_64/{version} -y"
+        ))
+        .spawn();
     }
 
     pub fn install(&self) {
