@@ -1,6 +1,6 @@
 [package]
 name = "cargo-pak"
-"version" = "0.1.4"
+version = "0.1.5"
 edition = "2021"
 license = "GPL-3.0-only"
 repository = "https://github.com/toastxc/cargo-pack"
@@ -13,3 +13,4 @@ serde = { version = "1.0.203", features = ["derive"] }
 serde_yaml = "0.9.34+deprecated"
 toml = "0.8.14"
 anyhow = "1.0.86"
+clap = { version = "4.5.11", features = ["cargo"] }
