@@ -1,7 +1,6 @@
 use crate::data::cargo::Cargo;
 use crate::data::toml::ManifestToml;
 use crate::shell::Shell;
-use crate::version;
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::fs;
@@ -88,6 +87,7 @@ impl Module {
             sources: vec![Source {
                 r#type: "file".to_string(),
                 path: path.to_str().unwrap().to_string(),
+                //  derive,
             }],
         }
     }
@@ -108,7 +108,7 @@ impl From<ManifestToml> for ManifestYaml {
         Self {
             id: value.app_id.clone(),
             runtime: "org.freedesktop.Platform".to_string(),
-            runtime_version: version(),
+            runtime_version: crate::Flatpak::freedesktop_version(),
             sdk: "org.freedesktop.Sdk".to_string(),
             command: bin.clone(),
             finish_args: value.permissions,
