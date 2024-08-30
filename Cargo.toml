@@ -1,6 +1,6 @@
 [package]
-name = "cargo-pak"
-version = "0.1.3"
+name = "cargo-pak""
+version = "0.1.4"
 edition = "2021"
 license = "GPL-3.0-only"
 repository = "https://github.com/toastxc/cargo-pack"
