@@ -7,8 +7,7 @@ use crate::data::yaml::ManifestYaml;
 use crate::dep_check::check;
 use crate::flatpak::Flatpak;
 use crate::shell::Shell;
-use clap::{Arg, Command};
-use std::env::args;
+use clap::Command;
 
 pub type Result<T> = core::result::Result<T, anyhow::Error>;
 
