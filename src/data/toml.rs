@@ -28,9 +28,12 @@ pub struct ManifestToml {
 
 impl ManifestToml {
     pub fn read_file() -> crate::Result<Self> {
-        let file: ManifestToml = toml::from_str::<ManifestToml>(&String::from_utf8(
+        let mut file: ManifestToml = toml::from_str::<ManifestToml>(&String::from_utf8(
             std::fs::read(PathBuf::from_str("pak.toml")?)?,
         )?)?;
+        // set defaults
+        if file.runtime.is_none() { file.runtime = Some("freedesktop".to_string()) };
+        if file.runtime_version.is_none() { file.runtime = Some(crate::flatpak::Flatpak::runtime_version(&file.runtime.unwrap())) };
         Ok(file)
     }
 }

@@ -107,13 +107,9 @@ impl From<ManifestToml> for ManifestYaml {
 
         Self {
             id: value.app_id.clone(),
-            runtime: format!("org.{}.Platform", &value.runtime.clone().unwrap_or("freedesktop".to_string())),
-            runtime_version: value.runtime_version.unwrap_or(
-                crate::Flatpak::runtime_version(
-                    &value.runtime.clone().unwrap_or("freedesktop".to_string())
-                )
-            ),
-            sdk: format!("org.{}.Sdk", &value.runtime.clone().unwrap_or("freedesktop".to_string())),
+            runtime: format!("org.{}.Platform", &value.runtime.clone().unwrap()),
+            runtime_version: value.runtime_version.unwrap(),
+            sdk: format!("org.{}.Sdk", &value.runtime.clone().unwrap()),
             command: bin.clone(),
             finish_args: value.permissions,
             modules: [
