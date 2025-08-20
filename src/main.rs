@@ -80,7 +80,7 @@ fn install() -> Result<()> {
     let file = ManifestToml::read_file()?;
     println!("install");
 
-    Flatpak::install_freedesktop();
+    Flatpak::install_runtime(&file.runtime.unwrap_or("freedesktop".to_string()));
     Flatpak(file.app_id).install();
     Ok(())
 }

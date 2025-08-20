@@ -1,8 +1,8 @@
 use crate::Shell;
 pub struct Flatpak(pub String);
 impl Flatpak {
-    pub fn freedesktop_version() -> String {
-        let a = Shell::cmd("flatpak install org.freedesktop.Sdk")
+    pub fn runtime_version(runtime: &str) -> String {
+        let a = Shell::cmd(format!("flatpak install org.{runtime}.Sdk"))
             .exec()
             .unwrap();
         let mut a: Vec<String> = a.split('\n').map(String::from).collect();
@@ -19,16 +19,16 @@ impl Flatpak {
             .to_string()
     }
 
-    pub fn install_freedesktop() {
-        let version = Self::freedesktop_version();
+    pub fn install_runtime(runtime: &str) {
+        let version = Self::runtime_version(runtime);
 
         println!("VERSION: {version}");
         Shell::cmd(format!(
-            "flatpak install runtime/org.freedesktop.Platform/x86_64/{version} -y"
+            "flatpak install runtime/org.{runtime}.Platform/x86_64/{version} -y"
         ))
         .spawn();
         Shell::cmd(format!(
-            "flatpak install runtime/org.freedesktop.Sdk/x86_64/{version} -y"
+            "flatpak install runtime/org.{runtime}.Sdk/x86_64/{version} -y"
         ))
         .spawn();
     }

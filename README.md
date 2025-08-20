@@ -40,6 +40,10 @@ app_name= "hello"
 # defined in Cargo.toml (release is performant)
 profile="release"
 
+# optional runtime parameters (defaults to newest version of freedesktop)
+# runtime="gnome"
+# runtime-version="48"
+
 # cargo-pack will default to package name in Cargo.toml
 # bin="hello-world"
 

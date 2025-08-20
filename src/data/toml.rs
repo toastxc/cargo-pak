@@ -22,6 +22,8 @@ pub struct ManifestToml {
     pub permissions: Option<HashSet<String>>,
     #[serde(rename = "desktopfile")]
     pub desktop_file: DesktopFile,
+    pub runtime: Option<String>,
+    pub runtime_version: Option<String>,
 }
 
 impl ManifestToml {
