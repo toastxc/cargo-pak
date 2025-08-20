@@ -4,3 +4,4 @@
 *.png
 Cargo.lock
 *.desktop
+pak.toml
