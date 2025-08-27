@@ -33,7 +33,7 @@ impl ManifestToml {
         )?)?;
         // set defaults
         if file.runtime.is_none() { file.runtime = Some("freedesktop".to_string()) };
-        if file.runtime_version.is_none() { file.runtime = Some(crate::flatpak::Flatpak::runtime_version(&file.runtime.unwrap())) };
+        if file.runtime_version.is_none() { file.runtime_version = Some(crate::flatpak::Flatpak::runtime_version(&file.runtime.clone().unwrap())) };
         Ok(file)
     }
 }
