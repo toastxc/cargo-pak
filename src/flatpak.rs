@@ -15,7 +15,7 @@ impl Flatpak {
                 temp.last().unwrap().to_string().parse::<f32>().ok()
             })
             .reduce(f32::max)
-            .unwrap()
+            .expect("could not get runtime version")
             .to_string()
     }
 

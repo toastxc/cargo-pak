@@ -20,10 +20,11 @@ pub struct ManifestToml {
     #[serde(default = "profile")]
     pub profile: String,
     pub permissions: Option<HashSet<String>>,
-    #[serde(rename = "desktopfile")]
-    pub desktop_file: DesktopFile,
     pub runtime: Option<String>,
     pub runtime_version: Option<String>,
+    #[serde(rename = "desktopfile")]
+    pub desktop_file: DesktopFile,
+
 }
 
 impl ManifestToml {
@@ -31,9 +32,16 @@ impl ManifestToml {
         let mut file: ManifestToml = toml::from_str::<ManifestToml>(&String::from_utf8(
             std::fs::read(PathBuf::from_str("pak.toml")?)?,
         )?)?;
-        // set defaults
-        if file.runtime.is_none() { file.runtime = Some("freedesktop".to_string()) };
-        if file.runtime_version.is_none() { file.runtime_version = Some(crate::flatpak::Flatpak::runtime_version(&file.runtime.clone().unwrap())) };
+   
+        // might add support later?
+        // if file.runtime.is_none() { Some("freedesktop".to_string());  };
+        // if file.runtime_version.is_none() { Some(crate::flatpak::Flatpak::runtime_version(&file.runtime.clone().unwrap())); };
+
+
+        if file.runtime.is_none() ||  file.runtime_version.is_none() {
+            file.runtime = Some("freedesktop".to_string());
+            file.runtime_version = Some(crate::flatpak::Flatpak::runtime_version(&file.runtime.clone().unwrap()));
+        };
         Ok(file)
     }
 }
