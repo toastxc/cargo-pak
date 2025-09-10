@@ -57,6 +57,13 @@ permissions = [
 # definitions: https://specifications.freedesktop.org/desktop-entry-spec/desktop-entry-spec-latest.html
 [desktopfile]
 terminal= false
+
+# optional additional modules to add to the flatpak
+# definitions: https://docs.flatpak.org/en/latest/manifests.html#modules
+# [[modules]]
+# sources for the modules
+# definitions: https://docs.flatpak.org/en/latest/module-sources.html
+# [[modules.sources]]
 ```
 If you want to use a CLI, it's a bit more simple. Information such as the app name and version are derived from Cargo.toml
 ```toml

@@ -79,7 +79,7 @@ fn install() -> Result<()> {
     let file = ManifestToml::read_file()?;
     println!("install");
 
-    Flatpak::install_runtime(&file.runtime.unwrap());
+    Flatpak::install_runtime(&file.runtime);
     Flatpak(file.app_id).install();
     Ok(())
 }
