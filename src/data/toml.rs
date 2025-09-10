@@ -1,4 +1,4 @@
-use crate::data::desktop::DesktopFile;
+use crate::{data::{desktop::DesktopFile, yaml::Module}};
 use serde::{Deserialize, Serialize};
 use std::collections::HashSet;
 use std::path::PathBuf;
@@ -20,11 +20,12 @@ pub struct ManifestToml {
     #[serde(default = "profile")]
     pub profile: String,
     pub permissions: Option<HashSet<String>>,
-    pub runtime: Option<String>,
+    #[serde(default = "runtime")]
+    pub runtime: String,
     pub runtime_version: Option<String>,
     #[serde(rename = "desktopfile")]
     pub desktop_file: DesktopFile,
-
+    pub modules: Vec<Module>,
 }
 
 impl ManifestToml {
@@ -38,9 +39,8 @@ impl ManifestToml {
         // if file.runtime_version.is_none() { Some(crate::flatpak::Flatpak::runtime_version(&file.runtime.clone().unwrap())); };
 
 
-        if file.runtime.is_none() ||  file.runtime_version.is_none() {
-            file.runtime = Some("freedesktop".to_string());
-            file.runtime_version = Some(crate::flatpak::Flatpak::runtime_version(&file.runtime.clone().unwrap()));
+        if file.runtime_version.is_none() {
+            file.runtime_version = Some(crate::flatpak::Flatpak::runtime_version(&file.runtime.clone()));
         };
         Ok(file)
     }
@@ -48,4 +48,8 @@ impl ManifestToml {
 
 fn profile() -> String {
     String::from("release")
+}
+
+fn runtime() -> String {
+    String::from("freedesktop")
 }

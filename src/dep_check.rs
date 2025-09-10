@@ -1,6 +1,6 @@
 use crate::shell::Shell;
 
-const DEPS: [&str; 4] = ["convert", "flatpak-builder", "cargo", "mold"];
+const DEPS: [&str; 4] = ["magick", "flatpak-builder", "cargo", "mold"];
 
 pub fn check() {
     for x in DEPS {
