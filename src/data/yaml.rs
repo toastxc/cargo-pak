@@ -24,7 +24,7 @@ impl ManifestYaml {
         let file = ManifestToml::read_file()?;
         Shell::cmd("mkdir icons").exec();
         Shell::cmd(format!(
-            "convert {} -resize 128x128 icons/{}-128.png",
+            "magick {} -resize 128x128 icons/{}-128.png",
             file.bin, file.bin,
         ))
         .exec();
@@ -61,7 +61,7 @@ Exec={}
         };
 
         Shell::cmd(format!(
-            "convert {}.png -resize 128x128 icons/{}-128.png",
+            "magick {}.png -resize 128x128 icons/{}-128.png",
             file.bin, file.bin,
         ))
         .spawn();
