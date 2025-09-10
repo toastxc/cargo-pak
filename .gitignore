@@ -5,3 +5,4 @@
 Cargo.lock
 *.desktop
 pak.toml
+.flatpak-builder
